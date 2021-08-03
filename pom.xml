@@ -19,7 +19,6 @@
     <junit.version>4.12</junit.version>
     <mockito.version>3.1.0</mockito.version>
     <lombok.version>1.18.20</lombok.version>
-    <log4j2.version>2.9.1</log4j2.version>
     <slf4j.version>1.7.25</slf4j.version>
     <pragmatists.version>1.1.1</pragmatists.version>
     <maven.compiler.source>11</maven.compiler.source>
@@ -113,6 +112,41 @@
       <artifactId>spring-orm</artifactId>
       <version>5.1.6.RELEASE</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.2.23</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>5.2.12.Final</version>
+    </dependency>
+    <!-- API, java.xml.bind module -->
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>2.3.2</version>
+    </dependency>
+
+    <!-- Runtime, com.sun.xml.bind module -->
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>2.3.2</version>
+    </dependency>
+
   </dependencies>
 
   <build>
