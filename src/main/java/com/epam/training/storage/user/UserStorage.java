@@ -1,6 +1,6 @@
 package com.epam.training.storage.user;
 
-import com.epam.training.model.user.User;
+import com.epam.training.model.User;
 
 import java.util.List;
 import java.util.Map;

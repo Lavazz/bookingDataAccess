@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<p><a href="/bookingApp/index.jsp">
+<p><a href="/bookingDataAccess/index.jsp">
     <button type="submit">Back</button>
 </a></p>
 
@@ -40,8 +40,8 @@
                 <td th:text="${user.getName()}">Stacy</td>
                 <td th:text="${user.getEmail()}">stasy@gmail.com</td>
                 <td>
-                    <a th:href="@{/update/{id}(id=${user.getId})}">Update</a>
-                    <a th:href="@{/delete/{id}(id=${user.getId})}">Delete</a>
+                    <a th:href="@{users/edit/{id}(id=${user.id})}">Edit</a>
+                    <a th:href="@{users/delete/{id}(id=${user.getId})}">Delete</a>
                 </td>
             </tr>
             </tbody>

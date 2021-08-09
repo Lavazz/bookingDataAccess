@@ -1,7 +1,8 @@
 package com.epam.training.service.user;
 
 import com.epam.training.dao.user.UserDao;
-import com.epam.training.model.user.User;
+import com.epam.training.exception.NoEntityException;
+import com.epam.training.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long userId) {
-        User user = userDao.getUserById(userId);
-        if (user == null) {
-            log.error("User not found.");
-            throw new IllegalStateException();
-        }
-
-        log.info("User found: {}",  user.toString());
-
+    public User getUserById(Long userId) {
+        User user = userDao.findById(userId).orElseThrow(() -> new NoEntityException("User not found"));
+        log.info("User found: {}", user.toString());
         return user;
     }
 
@@ -75,20 +70,22 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException();
         }
 
-        userDao.createUser(user);
+        User newUser = userDao.save(user);
         log.info("User created successfully. User details:{} ", user.toString());
-
-        return userDao.getUserById(user.getId());
+        return newUser;
     }
 
     @Override
     public User updateUser(User user) {
-        return userDao.updateUser(user);
+        User currentUser = userDao.findById(user.getId()).get();
+        userDao.delete(currentUser);
+        return userDao.save(user);
     }
 
     @Override
-    public boolean deleteUser(long userId) {
-        return userDao.deleteUser(userId);
+    public void deleteUser(Long id) {
+        User user = getUserById(id);
+        userDao.delete(user);
     }
 
     @Override
@@ -96,7 +93,7 @@ public class UserServiceImpl implements UserService {
         return userDao.findAll();
     }
 
-    boolean isExist(long id) {
+    boolean isExist(Long id) {
         List<User> userList = userDao.findAll();
         for (User user : userList) {
             if (user.getId() == id) {

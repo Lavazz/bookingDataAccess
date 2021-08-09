@@ -6,11 +6,11 @@
 </head>
 <body>
 
-<p><a href="/bookingApp/index.jsp">
+<p><a href="/bookingDataAccess/index.jsp">
     <button type="submit">Back</button>
 </a></p>
 
-<p><a href="/createEvent">
+<p><a href="events/new">
     <button type="submit">Create new event</button>
 </a></p>
 
@@ -32,7 +32,7 @@
                 <td th:text="${event.getId()}"></td>
                 <td th:text="${event.getDate()}"></td>
                 <td>
-                    <a th:href="@{/delete/{id}(id=${event.getId})}">Delete</a>
+                    <a th:href="@{events/delete/{id}(id=${event.getId})}">Delete</a>
                 </td>
             </tr>
             </tbody>

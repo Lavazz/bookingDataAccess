@@ -29,7 +29,6 @@ CREATE TABLE public.event
     id bigserial,
     title character varying COLLATE pg_catalog."default",
     date date,
-    ticket_price bigint,
     CONSTRAINT event_pkey PRIMARY KEY (id)
 );
 

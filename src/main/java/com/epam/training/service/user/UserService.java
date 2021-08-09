@@ -1,12 +1,12 @@
 package com.epam.training.service.user;
 
-import com.epam.training.model.user.User;
+import com.epam.training.model.User;
 
 import java.util.List;
 
 public interface UserService {
 
-    User getUserById(long userId);
+    User getUserById(Long userId);
 
     User getUserByEmail(String email);
 
@@ -16,7 +16,7 @@ public interface UserService {
 
     User updateUser(User user);
 
-    boolean deleteUser(long userId);
+    void deleteUser(Long userId);
 
     List<User> findAll();
 

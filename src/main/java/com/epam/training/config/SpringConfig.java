@@ -8,3 +8,4 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan("com.epam.training")
 public class SpringConfig implements WebMvcConfigurer {
 }
+

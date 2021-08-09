@@ -1,19 +1,7 @@
 package com.epam.training.dao.user;
 
-import com.epam.training.model.user.User;
+import com.epam.training.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface UserDao {
-
-    User getUserById(long userId);
-
-    User createUser(User user);
-
-    User updateUser(User user);
-
-    boolean deleteUser(long userId);
-
-    List<User> findAll();
-
+public interface UserDao extends JpaRepository<User, Long> {
 }

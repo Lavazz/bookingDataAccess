@@ -1,7 +1,9 @@
 package com.epam.training.service.event;
 
 import com.epam.training.dao.event.EventDao;
-import com.epam.training.model.event.Event;
+import com.epam.training.exception.NoEntityException;
+import com.epam.training.model.Event;
+import com.epam.training.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,10 @@ public class EventServiceImpl implements EventService {
     private final EventDao eventDao;
 
     @Override
-    public Event getEventById(long eventId) {
-        return eventDao.getEventById(eventId);
+    public Event getEventById(Long eventId) {
+        Event event = eventDao.findById(eventId).orElseThrow(() -> new NoEntityException("Event not found"));
+        log.info("Event found: {}", event.toString());
+        return event;
     }
 
     @Override
@@ -45,26 +49,28 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event createEvent(Event event) {
-        long id =  new Random().nextLong();
+        long id = new Random().nextLong();
         if (isExist(id)) {
             createEvent(event);
         } else {
             event.setId(id);
         }
-        eventDao.createEvent(event);
-        log.info("Event created successfully. Event details: {}", event.toString());
 
-        return eventDao.getEventById(event.getId());
+        Event newEvent = eventDao.save(event);
+        log.info("Event created successfully. event details:{} ", event.toString());
+        return newEvent;
     }
 
     @Override
     public Event updateEvent(Event event) {
-        return eventDao.updateEvent(event);
+        //  return eventDao.updateEvent(event);
+        return null;
     }
 
     @Override
-    public boolean deleteEvent(long eventId) {
-        return eventDao.deleteEvent(eventId);
+    public void deleteEvent(Long eventId) {
+        Event event = getEventById(eventId);
+        eventDao.delete(event);
     }
 
     @Override

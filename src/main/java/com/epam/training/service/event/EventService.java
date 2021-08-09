@@ -1,13 +1,13 @@
 package com.epam.training.service.event;
 
-import com.epam.training.model.event.Event;
+import com.epam.training.model.Event;
 
 import java.util.Date;
 import java.util.List;
 
 public interface EventService {
 
-    Event getEventById(long eventId);
+    Event getEventById(Long eventId);
 
     List<Event> getEventsByTitle(String title, int pageSize, int pageNum);
 
@@ -17,7 +17,7 @@ public interface EventService {
 
     Event updateEvent(Event event);
 
-    boolean deleteEvent(long eventId);
+    void deleteEvent(Long eventId);
 
     List<Event> findAll();
 

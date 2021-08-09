@@ -1,51 +1,69 @@
 package com.epam.training.config;
 
-import com.epam.training.model.event.Event;
-import com.epam.training.model.ticket.Ticket;
-import com.epam.training.model.user.User;
-import com.epam.training.model.user.UserAccount;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
-import org.hibernate.service.ServiceRegistry;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
+@Configuration
+@EnableJpaRepositories(basePackages = {"com.epam.training.dao"})
 public class HibernateConfig {
-    private static SessionFactory sessionFactory;
 
-    public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration();
+   private static final ResourceBundle resource = ResourceBundle.getBundle("application");
 
-                Properties settings = new Properties();
-                settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
-                settings.put(Environment.URL, "jdbc:mysql://127.0.0.1/hibernate_task?characterEncoding=utf8&serverTimezone=Europe/Minsk&useSSL=false");
-                settings.put(Environment.USER, "postgres");
-                settings.put(Environment.PASS, "1111");
-                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQL5Dialect");
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean entityManager
+                = new LocalContainerEntityManagerFactoryBean();
+        entityManager.destroy();
+        entityManager.setDataSource(dataSource());
+        entityManager.setPackagesToScan("com.epam.training.model");
 
-                settings.put(Environment.SHOW_SQL, "true");
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        entityManager.setJpaVendorAdapter(vendorAdapter);
+        entityManager.setJpaProperties(additionalProperties());
 
-                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+        return entityManager;
+    }
 
-                configuration.setProperties(settings);
+    Properties additionalProperties() {
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", resource.getString("hibernate.hbm2ddl.auto"));
+        properties.setProperty("hibernate.dialect", resource.getString("hibernate.dialect"));
+        properties.setProperty("hibernate.show_sql", resource.getString("hibernate.show_sql"));
+        return properties;
+    }
 
-                configuration.addAnnotatedClass(User.class);
-                configuration.addAnnotatedClass(Ticket.class);
-                configuration.addAnnotatedClass(Event.class);
-                configuration.addAnnotatedClass(UserAccount.class);
 
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
+    @Bean
+    public DataSource dataSource() {
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setDriverClassName(resource.getString("jdbc.driver.name"));
+        hikariConfig.setJdbcUrl(resource.getString("jdbc.url"));
+        hikariConfig.setUsername(resource.getString("jdbc.user"));
+        hikariConfig.setPassword(resource.getString("jdbc.password"));
+        hikariConfig.setMaximumPoolSize(Integer.parseInt(
+                Objects.requireNonNull(resource.getString("jdbc.hikari.maximum-pool-size"))));
+        hikariConfig.addDataSourceProperty("spring.jpa.generate-ddl", true);
+        return new HikariDataSource(hikariConfig);
+    }
 
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return sessionFactory;
+
+    @Bean
+    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
     }
 }

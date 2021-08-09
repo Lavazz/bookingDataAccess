@@ -1,8 +1,8 @@
 package com.epam.training.controller;
 
 import com.epam.training.facade.BookingFacade;
-import com.epam.training.model.user.User;
-import com.epam.training.model.user.UserImpl;
+import com.epam.training.model.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,15 +13,13 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Slf4j
 @Controller
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private BookingFacade bookingFacade;
-
-
+    private final BookingFacade bookingFacade;
 
     @GetMapping("/allUsers")
     public String getAllUsers(Model model) {
@@ -30,9 +28,10 @@ public class UserController {
         log.debug("get all users => {}", allUsers);
         model.addAttribute("allUsers", allUsers);
         model.addAttribute("heading", "List of all users in DB");
-       log.info("Method start. UserController (-- / --)");
+        log.info("Method start. UserController (-- / --)");
         return "list_users";
     }
+
 
     @GetMapping("users/new")
     public ModelAndView create() {
@@ -42,15 +41,13 @@ public class UserController {
     }
 
 
-    @GetMapping("/create")
+    @PostMapping("users/users/create")
     public String name(@RequestParam("name") String name, @RequestParam("email") String email) {
-       log.debug("Create user with name ({}) and email ({})", name, email);
-        User user = new UserImpl();
-        user.setName(name);
-        user.setEmail(email);
+        log.debug("Create user with name ({}) and email ({})", name, email);
+        User user = new User(name, email);
         bookingFacade.createUser(user);
-       log.info("Method start. UserController.");
-        return "redirect:/allUsers";
+        log.info("Method start. UserController.");
+        return  "redirect:/users/allUsers";
     }
 
     @PutMapping("/{id}")
@@ -71,17 +68,26 @@ public class UserController {
         return modelAndView;
     }
 
-    @DeleteMapping("/{id}")
-    public ModelAndView deleteUser(@PathVariable long id) {
-        ModelAndView modelAndView = new ModelAndView("entities");
-        boolean isDeleted = bookingFacade.deleteUser(id);
-        if (isDeleted) {
-            modelAndView.addObject("message", "delete entities");
-        } else {
-            modelAndView.addObject("message", "not found entity");
-        }
-        return modelAndView;
+    @GetMapping("users/edit/{id}")
+    public String showUpdateForm(@PathVariable("id") long id, Model model) {
+        User user = bookingFacade.getUserById(id);
+       model.addAttribute("user", user);
+        return "update-user";
     }
+
+    @PostMapping("users/edit/users/update/{id}")
+    public String updateUser(@PathVariable("id") long id, User user, Model model) {
+        user.setId(id);
+        bookingFacade.updateUser(user);
+        return "redirect:/users/allUsers";
+    }
+
+    @GetMapping("users/delete/{id}")
+    public String deleteUser(@PathVariable("id") long id, Model model) {
+        bookingFacade.deleteUser(id);
+        return "redirect:/users/allUsers";
+    }
+
 
     @GetMapping("/{id}")
     public ModelAndView getUserById(@PathVariable long id) {

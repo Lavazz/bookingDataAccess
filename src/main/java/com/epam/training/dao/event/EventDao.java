@@ -1,19 +1,7 @@
 package com.epam.training.dao.event;
 
-import com.epam.training.model.event.Event;
+import com.epam.training.model.Event;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface EventDao {
-
-    Event getEventById(long eventId);
-
-    Event createEvent(Event event);
-
-    Event updateEvent(Event event);
-
-    boolean deleteEvent(long eventId);
-
-    List<Event> findAll();
-
+public interface EventDao extends JpaRepository<Event, Long> {
 }
